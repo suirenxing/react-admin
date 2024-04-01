@@ -1,31 +1,42 @@
-import { defineConfig } from "vite";
+import { ConfigEnv, UserConfig, loadEnv } from "vite";
 import react from "@vitejs/plugin-react";
 import { resolve } from "path";
 import UnoCSS from "unocss/vite";
+import { createProxy, wrapperEnv } from "./src/utils/envConfig";
 function pathResolve(dir: string) {
   return resolve(process.cwd(), ".", dir);
 }
 
 // https://vitejs.dev/config/
-export default defineConfig({
-  plugins: [react(), UnoCSS()],
+export default ({ command, mode }: ConfigEnv): UserConfig => {
+  const root = process.cwd();
 
-  resolve: {
-    alias: [
-      {
-        find: "vue-i18n",
-        replacement: "vue-i18n/dist/vue-i18n.cjs.js",
-      },
-      // /@/xxxx => src/xxxx
-      {
-        find: /\@\//,
-        replacement: pathResolve("src") + "/",
-      },
-      // /#/xxxx => types/xxxx
-      {
-        find: /\#\//,
-        replacement: pathResolve("types") + "/",
-      },
-    ],
-  },
-});
+  const env = loadEnv(mode, root);
+  const viteEnv = wrapperEnv(env);
+
+  return {
+    plugins: [react(), UnoCSS()],
+
+    resolve: {
+      alias: [
+        // /@/xxxx => src/xxxx
+        {
+          find: /\@\//,
+          replacement: pathResolve("src") + "/",
+        },
+        // /#/xxxx => types/xxxx
+        {
+          find: /\#\//,
+          replacement: pathResolve("types") + "/",
+        },
+      ],
+    },
+
+    server: {
+      // Listening on all local IPs
+      host: true,
+      port: viteEnv.VITE_PORT,
+      proxy: createProxy(viteEnv.VITE_PROXY),
+    },
+  };
+};

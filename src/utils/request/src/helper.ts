@@ -1,15 +1,15 @@
-import { isObject, isString } from '/@/utils/is';
+import { isObject, isString } from "lodash-es";
 
-const DATE_TIME_FORMAT = 'YYYY-MM-DD HH:mm:ss';
+const DATE_TIME_FORMAT = "YYYY-MM-DD HH:mm:ss";
 
 export function joinTimestamp<T extends boolean>(
   join: boolean,
-  restful: T,
+  restful: T
 ): T extends true ? string : object;
 
 export function joinTimestamp(join: boolean, restful = false): string | object {
   if (!join) {
-    return restful ? '' : {};
+    return restful ? "" : {};
   }
   const now = new Date().getTime();
   if (restful) {
@@ -21,14 +21,14 @@ export function joinTimestamp(join: boolean, restful = false): string | object {
 /**
  * @description: Format request parameter time
  */
-export function formatRequestDate(params: Recordable) {
-  if (Object.prototype.toString.call(params) !== '[object Object]') {
+export const formatRequestDate = (params: Record<any, any>) => {
+  if (!isObject(params)) {
     return;
   }
 
   for (const key in params) {
     const format = params[key]?.format ?? null;
-    if (format && typeof format === 'function') {
+    if (format && typeof format === "function") {
       params[key] = params[key].format(DATE_TIME_FORMAT);
     }
     if (isString(key)) {
@@ -45,4 +45,4 @@ export function formatRequestDate(params: Recordable) {
       formatRequestDate(params[key]);
     }
   }
-}
+};

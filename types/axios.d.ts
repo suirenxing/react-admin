@@ -1,5 +1,4 @@
-export type ErrorMessageMode = 'none' | 'modal' | 'message' | undefined;
-export type SuccessMessageMode = ErrorMessageMode;
+export type ErrorMessageMode = "none" | "modal" | "message" | undefined;
 
 export interface RequestOptions {
   // Splicing request parameters to url
@@ -11,51 +10,21 @@ export interface RequestOptions {
   // Whether to return native response headers
   // For example: use this attribute when you need to get the response headers
   isReturnNativeResponse?: boolean;
-  // Whether to join url
-  joinPrefix?: boolean;
   // Interface address, use the default apiUrl if you leave it blank
-  apiUrl?: string;
-  // 请求拼接路径
-  urlPrefix?: string;
+  apiUrl?: string | (() => string);
   // Error message prompt type
   errorMessageMode?: ErrorMessageMode;
-  // modal确认回调
-  onOk?: ((...args: any[]) => any) | undefined;
-  // Success message prompt type
-  successMessageMode?: SuccessMessageMode;
   // Whether to add a timestamp
   joinTime?: boolean;
   ignoreCancelToken?: boolean;
   // Whether to send token in header
   withToken?: boolean;
-  // 请求重试机制
-  retryRequest?: RetryRequest;
 }
 
-export interface RetryRequest {
-  isOpenRetry: boolean;
-  count: number;
-  waitTime: number;
-}
-export interface Result<T = any> {
+export interface RequestResult<T = any> {
   code: number;
-  type?: 'success' | 'error' | 'warning';
-  message?: string;
-  result?: T;
-  data: any;
-  msg: string;
-  errorMsg: string;
-}
-
-// multipart/form-data: upload file
-export interface UploadFileParams {
-  // Other parameters
-  data?: Recordable;
-  // File parameter interface field name
-  name?: string;
-  // file name
-  file: File | Blob;
-  // file name
-  filename?: string;
-  [key: string]: any;
+  type: "success" | "error" | "warning";
+  message: string;
+  result: T;
+  success: boolean;
 }

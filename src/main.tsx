@@ -8,7 +8,7 @@ import AntConfig from "./config/AntConfig.tsx"; // main.ts
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <AntConfig>
-      <App />
+      <App></App>
     </AntConfig>
   </React.StrictMode>
 );

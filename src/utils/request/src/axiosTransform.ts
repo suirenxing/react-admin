@@ -1,8 +1,12 @@
 /**
  * Data processing class, can be configured according to the project
  */
-import type { AxiosRequestConfig, AxiosResponse } from 'axios';
-import type { RequestOptions, Result } from '/#/axios';
+import type {
+  AxiosRequestConfig,
+  AxiosResponse,
+  InternalAxiosRequestConfig,
+} from "axios";
+import type { RequestOptions, RequestResult } from "types/axios";
 
 export interface CreateAxiosOptions extends AxiosRequestConfig {
   authenticationScheme?: string;
@@ -13,14 +17,19 @@ export interface CreateAxiosOptions extends AxiosRequestConfig {
 export abstract class AxiosTransform {
   /**
    * @description: Process configuration before request
-   * @description: Process configuration before request
    */
-  beforeRequestHook?: (config: AxiosRequestConfig, options: RequestOptions) => AxiosRequestConfig;
+  beforeRequestHook?: (
+    config: AxiosRequestConfig,
+    options: RequestOptions
+  ) => AxiosRequestConfig;
 
   /**
-   * @description: 处理响应数据
+   * @description: Request successfully processed
    */
-  transformResponseHook?: (res: AxiosResponse<Result>, options: RequestOptions) => any;
+  transformRequestHook?: (
+    res: AxiosResponse<RequestResult>,
+    options: RequestOptions
+  ) => any;
 
   /**
    * @description: 请求失败处理
@@ -31,9 +40,9 @@ export abstract class AxiosTransform {
    * @description: 请求之前的拦截器
    */
   requestInterceptors?: (
-    config: AxiosRequestConfig,
-    options: CreateAxiosOptions,
-  ) => AxiosRequestConfig;
+    config: InternalAxiosRequestConfig,
+    options: CreateAxiosOptions
+  ) => InternalAxiosRequestConfig;
 
   /**
    * @description: 请求之后的拦截器
@@ -48,5 +57,5 @@ export abstract class AxiosTransform {
   /**
    * @description: 请求之后的拦截器错误处理
    */
-  responseInterceptorsCatch?: (axiosInstance: AxiosResponse, error: Error) => void;
+  responseInterceptorsCatch?: (error: Error) => void;
 }

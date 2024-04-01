@@ -1,39 +1,40 @@
+import type { CreateAxiosOptions } from "./axiosTransform";
 import type {
   AxiosRequestConfig,
   AxiosInstance,
   AxiosResponse,
   AxiosError,
+  InternalAxiosRequestConfig,
 } from "axios";
-import type { RequestOptions, Result, UploadFileParams } from "#/axios";
-import type { CreateAxiosOptions } from "./axiosTransform";
+import type { RequestOptions, RequestResult } from "types/axios";
 import axios from "axios";
 import qs from "qs";
+import { isFunction, cloneDeep } from "lodash-es";
 import { AxiosCanceler } from "./axiosCancel";
-import { isFunction } from "@/utils/is";
-import { cloneDeep } from "lodash-es";
-import { ContentTypeEnum } from "@/enums/httpEnum";
-import { RequestEnum } from "@/enums/httpEnum";
-
+import { ContentTypeEnum, RequestEnum } from "./constants";
+import axiosRetry from "axios-retry";
 export * from "./axiosTransform";
 
 /**
- * @description:  axios module
+ * @description: axios module
  */
 export class VAxios {
   private axiosInstance: AxiosInstance;
-  private readonly options: CreateAxiosOptions;
+  private options: CreateAxiosOptions;
 
   constructor(options: CreateAxiosOptions) {
     this.options = options;
     this.axiosInstance = axios.create(options);
+    axiosRetry(this.axiosInstance);
     this.setupInterceptors();
   }
 
   /**
-   * @description:  Create axios instance
+   * @description: Create axios instance
    */
   private createAxios(config: CreateAxiosOptions): void {
     this.axiosInstance = axios.create(config);
+    axiosRetry(this.axiosInstance);
   }
 
   private getTransform() {
@@ -48,11 +49,14 @@ export class VAxios {
   /**
    * @description: Reconfigure axios
    */
-  configAxios(config: CreateAxiosOptions) {
+  configAxios(options: CreateAxiosOptions) {
     if (!this.axiosInstance) {
       return;
     }
-    this.createAxios(config);
+    const opt: CreateAxiosOptions = Object.assign({}, this.options, options);
+    this.createAxios(opt);
+    this.options = opt;
+    this.setupInterceptors();
   }
 
   /**
@@ -66,7 +70,7 @@ export class VAxios {
   }
 
   /**
-   * @description: Interceptor configuration 拦截器配置
+   * @description: Interceptor configuration
    */
   private setupInterceptors() {
     const transform = this.getTransform();
@@ -84,7 +88,7 @@ export class VAxios {
 
     // Request interceptor configuration processing
     this.axiosInstance.interceptors.request.use(
-      (config: AxiosRequestConfig) => {
+      (config: InternalAxiosRequestConfig) => {
         // If cancel repeat request is turned on, then cancel repeat request is prohibited
         // @ts-ignore
         const { ignoreCancelToken } = config.requestOptions;
@@ -122,51 +126,10 @@ export class VAxios {
     // Response result interceptor error capture
     responseInterceptorsCatch &&
       isFunction(responseInterceptorsCatch) &&
-      this.axiosInstance.interceptors.response.use(undefined, (error) => {
-        // @ts-ignore
-        return responseInterceptorsCatch(this.axiosInstance, error);
-      });
-  }
-
-  /**
-   * @description:  File Upload
-   */
-  uploadFile<T = any>(config: AxiosRequestConfig, params: UploadFileParams) {
-    const formData = new window.FormData();
-    const customFilename = params.name || "file";
-
-    if (params.filename) {
-      formData.append(customFilename, params.file, params.filename);
-    } else {
-      formData.append(customFilename, params.file);
-    }
-
-    if (params.data) {
-      Object.keys(params.data).forEach((key) => {
-        const value = params.data![key];
-        if (Array.isArray(value)) {
-          value.forEach((item) => {
-            formData.append(`${key}[]`, item);
-          });
-          return;
-        }
-
-        formData.append(key, params.data![key]);
-      });
-    }
-
-    const BASE_URL = import.meta.env.VITE_GLOB_API_URL;
-    return this.axiosInstance.request<T>({
-      ...config,
-      url: `${BASE_URL}${config.url}`,
-      method: "PUT",
-      data: formData,
-      headers: {
-        "Content-type": ContentTypeEnum.FORM_DATA,
-        // @ts-ignore
-        ignoreCancelToken: true,
-      },
-    });
+      this.axiosInstance.interceptors.response.use(
+        undefined,
+        responseInterceptorsCatch
+      );
   }
 
   // support form-data
@@ -224,11 +187,11 @@ export class VAxios {
     const transform = this.getTransform();
 
     const { requestOptions } = this.options;
-
     const opt: RequestOptions = Object.assign({}, requestOptions, options);
 
-    const { beforeRequestHook, requestCatchHook, transformResponseHook } =
+    const { beforeRequestHook, requestCatchHook, transformRequestHook } =
       transform || {};
+
     if (beforeRequestHook && isFunction(beforeRequestHook)) {
       conf = beforeRequestHook(conf, opt);
     }
@@ -238,11 +201,11 @@ export class VAxios {
 
     return new Promise((resolve, reject) => {
       this.axiosInstance
-        .request<any, AxiosResponse<Result>>(conf)
-        .then((res: AxiosResponse<Result>) => {
-          if (transformResponseHook && isFunction(transformResponseHook)) {
+        .request<any, AxiosResponse<RequestResult>>(conf)
+        .then((res: AxiosResponse<RequestResult>) => {
+          if (transformRequestHook && isFunction(transformRequestHook)) {
             try {
-              const ret = transformResponseHook(res, opt);
+              const ret = transformRequestHook(res, opt);
               resolve(ret);
             } catch (err) {
               reject(err || new Error("request error!"));
