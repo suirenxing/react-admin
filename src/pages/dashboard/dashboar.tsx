@@ -1,5 +1,6 @@
 import { getUserList } from "@/api/user";
 import { Button } from "antd";
+import { Outlet } from "react-router-dom";
 
 export default function Dashboard() {
   const getList = () => {
@@ -11,6 +12,7 @@ export default function Dashboard() {
       <Button type="primary" onClick={getList}>
         获取用户列表
       </Button>
+      <Outlet />
     </div>
   );
 }

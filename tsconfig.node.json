@@ -11,10 +11,5 @@
       "#/*": ["types/*"]
     }
   },
-  "include": [
-    "vite.config.ts",
-    "src/**/*.ts",
-    "types/**/*.d.ts",
-    "types/**/*.ts"
-  ]
+  "include": ["vite.config.ts", "src/utils/envConfig.ts"]
 }

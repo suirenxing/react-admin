@@ -1,4 +1,3 @@
-import axios from "axios";
 import { defHttp } from "@/utils/request/index";
 /**
  * userModel
@@ -48,6 +47,6 @@ export interface UserModel {
 }
 
 /** 获取用户列表 */
-export const getUserList = (params) => {
+export const getUserList = (params: any) => {
   return defHttp.get<UserModel[]>({ url: "/basic-api/user/list", params });
 };

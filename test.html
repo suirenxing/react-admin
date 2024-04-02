@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+    <script>
+      const data = [
+        { x: 0, y: 50 },
+        { x: 1, y: 80 },
+        { x: 2, y: 40 },
+        { x: 3, y: 60 },
+        { x: 4, y: 70 },
+        { x: 5, y: 50 },
+      ];
+      const width = 800;
+      const height = 400;
+
+      const svg = d3
+        .select("body")
+        .append("svg")
+        .attr("width", width)
+        .attr("height", height);
+
+      const x = d3
+        .scaleLinear()
+        .domain([0, d3.max(data, (d) => d.x)])
+        .range([0, width]);
+
+      const y = d3
+        .scaleLinear()
+        .domain([0, d3.max(data, (d) => d.y)])
+        .range([height, 0]);
+      const line = d3
+        .line()
+        .x((d) => x(d.x))
+        .y((d) => y(d.y));
+
+      svg
+        .append("path")
+        .datum(data)
+        .attr("fill", "none")
+        .attr("stroke", "steelblue")
+        .attr("stroke-width", 2)
+        .attr("d", line);
+
+      const path = svg
+        .append("path")
+        .datum(data)
+        .attr("fill", "none")
+        .attr("stroke", "steelblue")
+        .attr("stroke-width", 2)
+        .attr("d", line)
+        .attr("opacity", 0);
+
+      const totalLength = path.node().getTotalLength();
+      let progress = 0;
+
+      function animate() {
+        progress += 0.01;
+        if (progress > 1) {
+          progress = 0;
+        }
+
+        const point1 = path
+          .node()
+          .getPointAtLength((progress - 0.01) * totalLength);
+        const point2 = path.node().getPointAtLength(progress * totalLength);
+
+        svg
+          .append("line")
+          .attr("x1", point1.x)
+          .attr("y1", point1.y)
+          .attr("x2", point2.x)
+          .attr("y2", point2.y)
+          .attr("stroke", "green")
+          .attr("stroke-width", 3)
+          .transition()
+          .duration(500)
+          .attr("stroke-width", 0)
+          .remove();
+
+        requestAnimationFrame(animate);
+      }
+
+      animate();
+    </script>
+  </body>
+</html>

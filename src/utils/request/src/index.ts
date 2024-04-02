@@ -7,7 +7,7 @@ import type { AxiosTransform, CreateAxiosOptions } from "./axiosTransform";
 
 import { VAxios } from "./Axios";
 import { checkStatus } from "./checkStatus";
-import { isString, isFunction, clone, cloneDeep as deepMerge } from "lodash-es";
+import { isString, clone, cloneDeep as deepMerge } from "lodash-es";
 import { appendUrlParams } from "@/utils/utils";
 import { RequestEnum, ResultEnum, ContentTypeEnum } from "./constants";
 import { joinTimestamp, formatRequestDate } from "./helper";
@@ -50,14 +50,12 @@ const transform: AxiosTransform = {
 
     if (hasSuccess) {
       if (message) {
-        debugger;
         context.message && context.message.success(message);
       }
 
       return result;
     }
 
-    // @ts-ignore
     context.message.error(message);
 
     switch (code) {
@@ -74,7 +72,7 @@ const transform: AxiosTransform = {
     const { apiUrl, joinParamsToUrl, formatDate, joinTime = true } = options;
     const { baseURL } = config;
     if (apiUrl) {
-      let _apiUrl = isString(apiUrl) ? apiUrl : (apiUrl as any)();
+      const _apiUrl = isString(apiUrl) ? apiUrl : (apiUrl as any)();
       config.url = `${_apiUrl}${config.url}`;
     }
     const params = config.params || {};
@@ -128,12 +126,9 @@ const transform: AxiosTransform = {
   requestInterceptors: (config, options) => {
     // 请求之前处理config
     const token = context.getTokenFunction?.();
-    if (
-      token &&
-      (config as Record<any, any>)?.requestOptions?.withToken !== false
-    ) {
+    if (token && (config as Recordable)?.requestOptions?.withToken !== false) {
       // jwt token
-      (config as Record<any, any>).headers.Authorization =
+      (config as Recordable).headers.Authorization =
         options.authenticationScheme
           ? `${options.authenticationScheme} ${token}`
           : token;
