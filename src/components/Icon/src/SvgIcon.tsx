@@ -1,17 +1,18 @@
 import { useMemo } from "react";
 
 interface Props {
-  name: string;
+  icon: string;
   size?: string | number;
   color?: string;
   prefix?: string;
 }
 function SvgIcon(props: Props) {
+  const className = props.icon.split("|")[0];
   const iconName = useMemo<string>(() => {
-    return `#${props.prefix}-${props.name}`;
-  }, [props.prefix, props.name]);
+    return `#${props.prefix}-${className}`;
+  }, [props.prefix, className]);
   return (
-    <svg style={{ height: props.size, width: props.size }}>
+    <svg style={{ height: props.size, width: props.size, marginRight: "10px" }}>
       <use href={iconName} fill={props.color} />
     </svg>
   );

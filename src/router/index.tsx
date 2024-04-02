@@ -17,12 +17,12 @@ const router = createBrowserRouter([
       {
         path: "dashboard",
         Component: lazy(() => import("@/pages/dashboard/dashboar")),
-        children: [
-          {
-            path: "test",
-            element: <User />,
-          },
-        ],
+        // children: [
+        //   {
+        //     path: "test",
+        //     element: <User />,
+        //   },
+        // ],
       },
       {
         path: "user",
