@@ -1,3 +1,3 @@
 export default function MainContent({ children }: WithChildren) {
-  return <div>{children}</div>;
+  return <div className="overflow-y-auto h-full">{children}</div>;
 }

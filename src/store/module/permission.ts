@@ -2,14 +2,14 @@ import { Menu } from "@/api/sys";
 import { create } from "zustand";
 
 type PermissionState = {
-  munus: Menu[];
+  menus: Menu[];
 };
 interface PermissionAction {
   setMenus: (menus: Menu[]) => void;
 }
-export const usePermissionStore = create<PermissionState & PermissionAction>(
+export const permissionStore = create<PermissionState & PermissionAction>(
   (set) => ({
-    munus: [],
-    setMenus: (menus) => set(() => ({ munus: menus })),
+    menus: [],
+    setMenus: (menus) => set(() => ({ menus: menus })),
   })
 );

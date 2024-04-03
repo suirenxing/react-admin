@@ -9,7 +9,7 @@ import { Suspense } from "react";
 export default function DefaultLayout() {
   const { sideWidth } = useAppStore();
   return (
-    <Layout style={{ width: "100%", height: "100%" }}>
+    <Layout style={{ width: "100%", height: "100vh", overflowY: "hidden" }}>
       <Layout.Header>
         <Header />
       </Layout.Header>

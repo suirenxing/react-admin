@@ -12,6 +12,7 @@
   "dependencies": {
     "@ant-design/icons": "^5.3.6",
     "@loadable/component": "^5.16.3",
+    "@types/loadable__component": "^5.13.9",
     "antd": "^5.16.0",
     "axios": "^1.6.8",
     "axios-retry": "^4.1.0",

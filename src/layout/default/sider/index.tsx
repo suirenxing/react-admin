@@ -1,18 +1,47 @@
 import { GetProp, Menu, MenuProps } from "antd";
 import useAppStore from "@/store/module/appStore";
-import userStore from "@/store/module/userStore";
 import { Link } from "react-router-dom";
+import type { Menu as IMenu } from "@/api/sys";
+import { permissionStore } from "@/store/module/permission";
+
+type MenuItem = GetProp<MenuProps, "items">[number];
+function getItem(
+  label: React.ReactNode,
+  key: React.Key,
+  icon?: React.ReactNode,
+  children?: MenuItem[],
+  type?: "group"
+): MenuItem {
+  return {
+    key,
+    icon,
+    children,
+    label,
+    type,
+  } as MenuItem;
+}
+const transformMenu = (menus: IMenu[]): MenuItem[] => {
+  return menus.map((menu) => {
+    if (menu.children?.length) {
+      return getItem(
+        <Link to={menu.redirect!}>{menu.title}</Link>,
+        menu.id,
+        menu.icon,
+        transformMenu(menu.children)
+      );
+    }
+    return getItem(
+      <Link to={menu.path}>{menu.title}</Link>,
+      menu.id,
+      menu.icon
+    );
+  });
+};
 export default function Sider() {
   const { sideWidth } = useAppStore();
-  const menus = userStore((state) => state.menus);
-  type MenuItem = GetProp<MenuProps, "items">[number];
-  const items: MenuItem[] = menus.map((menu) => {
-    return {
-      label: <Link to={menu.path}>{menu.title}</Link>,
-      key: menu.id,
-      icon: menu.icon,
-    };
-  });
+  const menus = permissionStore((state) => state.menus);
+
+  const items: MenuItem[] = transformMenu(menus);
   return (
     <div>
       <Menu mode="inline" style={{ width: sideWidth }} items={items}></Menu>

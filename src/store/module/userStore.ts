@@ -1,15 +1,14 @@
 import { create } from "zustand";
-import type { Menu } from "@/api/sys";
 type UserState = {
   user: any;
-  menus: Menu[];
+  token?: string;
 };
 type UserAction = {
-  setMenus: (menus: Menu[]) => void;
+  setToken: (token: string) => void;
 };
 const userStore = create<UserState & UserAction>((set) => ({
   user: null,
-  menus: [],
-  setMenus: (menus) => set(() => ({ menus })),
+  token: "",
+  setToken: (token: string) => set((state) => ({ ...state, token })),
 }));
 export default userStore;

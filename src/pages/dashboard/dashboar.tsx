@@ -7,7 +7,7 @@ export default function Dashboard() {
     getUserList({ page: 1, pageSize: 10 });
   };
   return (
-    <div>
+    <div className="h-1000px">
       <h1>Dashboard</h1>
       <Button type="primary" onClick={getList}>
         获取用户列表
