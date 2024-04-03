@@ -1,3 +1,5 @@
+import { defHttp } from "@/utils/request";
+
 export interface Menu {
   id: number | string;
   title?: string;
@@ -8,6 +10,12 @@ export interface Menu {
   children?: Menu[];
   [index: number]: string;
 }
+export const getMenuLists = (params: Recordable) => {
+  return defHttp.get({
+    url: "/menu/list",
+    params,
+  });
+};
 export const getMenus = () => {
   return new Promise<Menu[]>((resolve) => {
     setTimeout(() => {
@@ -17,14 +25,14 @@ export const getMenus = () => {
           title: "用户",
           path: "/user",
           icon: "UserOutlined",
-          component: "/user/user.tsx",
+          component: "/user/index.tsx",
         },
         {
           id: 1,
           title: "dashboard",
           path: "/dashboard",
           icon: "dashboard|svg",
-          component: "/dashboard/dashboar.tsx",
+          component: "/dashboard/index.tsx",
         },
         {
           id: 3,
@@ -38,13 +46,21 @@ export const getMenus = () => {
               id: 31,
               title: "菜单管理",
               path: "/system/menu",
-              component: "/user/user.tsx",
+              component: "/system/menu/index.tsx",
             },
             {
               id: 32,
               title: "角色管理",
               path: "/system/role",
-              component: "/dashboard/dashboar.tsx",
+              component: "/dashboard/index.tsx",
+              children: [
+                {
+                  id: 321,
+                  title: "角色列表",
+                  path: "/system/role/list",
+                  component: "/dashboard/index.tsx",
+                },
+              ],
             },
           ],
         },

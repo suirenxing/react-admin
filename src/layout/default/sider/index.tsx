@@ -23,8 +23,9 @@ function getItem(
 const transformMenu = (menus: IMenu[]): MenuItem[] => {
   return menus.map((menu) => {
     if (menu.children?.length) {
+      // 如果是subMenu不使用<Link />，否则有样式问题
       return getItem(
-        <Link to={menu.redirect!}>{menu.title}</Link>,
+        menu.title,
         menu.id,
         menu.icon,
         transformMenu(menu.children)
@@ -42,6 +43,7 @@ export default function Sider() {
   const menus = permissionStore((state) => state.menus);
 
   const items: MenuItem[] = transformMenu(menus);
+
   return (
     <div>
       <Menu mode="inline" style={{ width: sideWidth }} items={items}></Menu>

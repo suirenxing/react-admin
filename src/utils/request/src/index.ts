@@ -70,7 +70,6 @@ const transform: AxiosTransform = {
   // 请求之前处理config
   beforeRequestHook: (config, options) => {
     const { apiUrl, joinParamsToUrl, formatDate, joinTime = true } = options;
-    const { baseURL } = config;
     if (apiUrl) {
       const _apiUrl = isString(apiUrl) ? apiUrl : (apiUrl as any)();
       config.url = `${_apiUrl}${config.url}`;
@@ -210,7 +209,7 @@ export const createAxios = (opt?: Partial<CreateAxiosOptions>) => {
         // 消息提示类型
         errorMessageMode: "message",
         // 接口地址
-        apiUrl: "",
+        apiUrl: "/basic-api",
         //  是否加入时间戳
         joinTime: true,
         // 忽略重复请求

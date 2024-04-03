@@ -1,7 +1,7 @@
 import { Menu } from "@/api/sys";
 import { lazy } from "react";
 import { Navigate, RouteObject } from "react-router-dom";
-const modules = import.meta.glob("../pages/**/*.tsx");
+const modules = import.meta.glob("../pages/**/index.tsx");
 const components = Object.keys(modules).reduce<Record<string, any>>(
   (pre, cur) => {
     pre[cur.replace("../pages", "")] = modules[cur];

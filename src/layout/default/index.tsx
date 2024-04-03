@@ -9,7 +9,7 @@ import { Suspense } from "react";
 export default function DefaultLayout() {
   const { sideWidth } = useAppStore();
   return (
-    <Layout style={{ width: "100%", height: "100vh", overflowY: "hidden" }}>
+    <Layout style={{ width: "100%", height: "100%", overflowY: "hidden" }}>
       <Layout.Header>
         <Header />
       </Layout.Header>
@@ -17,12 +17,10 @@ export default function DefaultLayout() {
         <Layout.Sider width={sideWidth}>
           <Sider />
         </Layout.Sider>
-        <Layout.Content>
-          <Content>
-            <Suspense fallback={<Spin size="large"></Spin>}>
-              <Outlet />
-            </Suspense>
-          </Content>
+        <Layout.Content className="h-full overflow-y-auto">
+          <Suspense fallback={<Spin size="large"></Spin>}>
+            <Outlet />
+          </Suspense>
         </Layout.Content>
       </Layout>
     </Layout>
