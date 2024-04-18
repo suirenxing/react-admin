@@ -49,9 +49,9 @@ const transform: AxiosTransform = {
       data && Reflect.has(data, "code") && code === ResultEnum.SUCCESS;
 
     if (hasSuccess) {
-      if (message) {
-        context.message && context.message.success(message);
-      }
+      // if (message) {
+      //   context.message && context.message.success(message);
+      // }
 
       return result;
     }
@@ -211,7 +211,7 @@ export const createAxios = (opt?: Partial<CreateAxiosOptions>) => {
         // 接口地址
         apiUrl: "/basic-api",
         //  是否加入时间戳
-        joinTime: true,
+        joinTime: false,
         // 忽略重复请求
         ignoreCancelToken: true,
         // 是否携带token

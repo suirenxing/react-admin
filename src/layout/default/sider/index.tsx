@@ -25,15 +25,15 @@ const transformMenu = (menus: IMenu[]): MenuItem[] => {
     if (menu.children?.length) {
       // 如果是subMenu不使用<Link />，否则有样式问题
       return getItem(
-        menu.title,
-        menu.id,
+        menu.name,
+        menu.id!,
         menu.icon,
         transformMenu(menu.children)
       );
     }
     return getItem(
-      <Link to={menu.path}>{menu.title}</Link>,
-      menu.id,
+      <Link to={menu.path}>{menu.name}</Link>,
+      menu.id!,
       menu.icon
     );
   });
